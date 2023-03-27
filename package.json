@@ -1,7 +1,7 @@
 {
   "name": "@gr4vy/embed-react-native",
   "version": "0.1.0",
-  "description": "test",
+  "description": "Embed Gr4vy in your React Native app to store card details, authorize payments, and capture a transaction.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/index.d.ts",
