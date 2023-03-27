@@ -35,7 +35,9 @@ const LINKING_ERROR =
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
 
-export const EmbedReactNativeEventEmitter = new NativeEventEmitter(EmbedReactNativeEvents);
+export const EmbedReactNativeEventEmitter = new NativeEventEmitter(
+  EmbedReactNativeEvents
+);
 
 export default (EmbedReactNative
   ? EmbedReactNative

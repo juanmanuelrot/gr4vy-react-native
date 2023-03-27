@@ -43,10 +43,11 @@ function App(): JSX.Element {
     const currency = 'USD';
     const country = 'US';
 
-    const onPaymentMethodSelectedSubscription = EmbedReactNativeEventEmitter.addListener(
-      'onPaymentMethodSelected',
-      onPaymentMethodSelected
-    );
+    const onPaymentMethodSelectedSubscription =
+      EmbedReactNativeEventEmitter.addListener(
+        'onPaymentMethodSelected',
+        onPaymentMethodSelected
+      );
 
     EmbedReactNative.showPaymentSheet(
       gr4vyId,
