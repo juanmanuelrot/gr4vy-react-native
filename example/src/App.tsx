@@ -5,6 +5,7 @@
  * @format
  */
 
+import { GR4VY_ID, TOKEN } from '@env';
 import React from 'react';
 import {
   SafeAreaView,
@@ -35,11 +36,10 @@ function App(): JSX.Element {
   };
 
   const startPayment = () => {
-    const gr4vyId = 'spider';
+    const gr4vyId = `${GR4VY_ID}`;
     const env = 'sandbox';
-    const token =
-      'eyJhbGciOiJFUzUxMiIsInR5cCI6IkpXVCIsImtpZCI6IlRvS2k5VEc1X21QV2VqUVh2ZE9rUzFud2p6dkdTSU9yVEFvb2p6bzY5R28ifQ.eyJzY29wZXMiOlsiZW1iZWQiXSwiZW1iZWQiOnsiYW1vdW50IjowLCJjdXJyZW5jeSI6IlVTRCJ9LCJpYXQiOjE2Nzk5MTgxMTUsIm5iZiI6MTY3OTkxODExNSwiZXhwIjoxNjc5OTIxNzE1LCJpc3MiOiJHcjR2eSBOb2RlIFNESyAwLjQxLjAgLSBOb2RlIHYxNi4xOS4wIiwianRpIjoiYzhhMTUzNDUtOWJlOC00Mjc0LWJmYTEtZDQwZDQyNmI0NTE4In0.ANr0EhreU10REMk2oRY-EO9AMrTkdVbZL7cWIsZfiufi6la16zXfoJhn1cFe0C76UQsZT_JdqCYMUpm5scxLhRDsADMGZAJGNoRJ19ma3p_Pdn5MSNllylm2eLR5G2XV8AxK8qZgj52ZuXUPk5G9VCXUvW-wfRLXUiFPhQCOO_cePg06';
-    const amount = 1000;
+    const token = `${TOKEN}`;
+    const amount = 1299;
     const currency = 'USD';
     const country = 'US';
 
