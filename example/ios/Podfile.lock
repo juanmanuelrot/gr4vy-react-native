@@ -592,7 +592,7 @@ SPEC CHECKSUMS:
   FlipperKit: cbdee19bdd4e7f05472a66ce290f1b729ba3cb86
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
-  gr4vy-embed-react-native: 34f0cd0049b1cf9ca43c770f69372876e83392ef
+  gr4vy-embed-react-native: 8c57dc887d9df1a71c1456a5d6fdb842db908a83
   gr4vy-ios: a2078e68f5f23ce5f62b03a2d332d2d0ff113b92
   hermes-engine: a1f157c49ea579c28b0296bda8530e980c45bdb3
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
