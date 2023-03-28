@@ -1,5 +1,5 @@
-import EmbedReactNative from './EmbedReactNative';
+import EmbedReactNative from './EmbedReactNative'
 
-export * from './EmbedReactNative';
+export * from './EmbedReactNative'
 
-export default EmbedReactNative;
+export default EmbedReactNative

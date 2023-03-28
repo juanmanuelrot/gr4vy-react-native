@@ -5,8 +5,8 @@
  * @format
  */
 
-import { GR4VY_ID, TOKEN } from '@env';
-import React from 'react';
+import { GR4VY_ID, TOKEN } from '@env'
+import React from 'react'
 import {
   SafeAreaView,
   ScrollView,
@@ -14,40 +14,40 @@ import {
   useColorScheme,
   View,
   Button,
-} from 'react-native';
+} from 'react-native'
 
-import { Colors, Header } from 'react-native/Libraries/NewAppScreen';
+import { Colors, Header } from 'react-native/Libraries/NewAppScreen'
 
 import EmbedReactNative, {
   EmbedReactNativeEventEmitter,
   Gr4vyTransactionResult,
   Gr4vyPaymentMethod,
-} from '@gr4vy/embed-react-native';
+} from '@gr4vy/embed-react-native'
 
 function App(): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  const isDarkMode = useColorScheme() === 'dark'
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  }
 
   const onPaymentMethodSelected = (paymentMethod: Gr4vyPaymentMethod) => {
-    console.log('onPaymentMethodSelected', paymentMethod);
-  };
+    console.log('onPaymentMethodSelected', paymentMethod)
+  }
 
   const startPayment = () => {
-    const gr4vyId = `${GR4VY_ID}`;
-    const env = 'sandbox';
-    const token = `${TOKEN}`;
-    const amount = 1299;
-    const currency = 'USD';
-    const country = 'US';
+    const gr4vyId = `${GR4VY_ID}`
+    const env = 'sandbox'
+    const token = `${TOKEN}`
+    const amount = 1299
+    const currency = 'USD'
+    const country = 'US'
 
     const onPaymentMethodSelectedSubscription =
       EmbedReactNativeEventEmitter.addListener(
         'onPaymentMethodSelected',
         onPaymentMethodSelected
-      );
+      )
 
     EmbedReactNative.showPaymentSheet(
       gr4vyId,
@@ -58,15 +58,15 @@ function App(): JSX.Element {
       null,
       env,
       (error: string) => {
-        console.error(error);
-        onPaymentMethodSelectedSubscription.remove();
+        console.error(error)
+        onPaymentMethodSelectedSubscription.remove()
       },
       (transactionResult: Gr4vyTransactionResult) => {
-        console.log(transactionResult);
-        onPaymentMethodSelectedSubscription.remove();
+        console.log(transactionResult)
+        onPaymentMethodSelectedSubscription.remove()
       }
-    );
-  };
+    )
+  }
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -89,7 +89,7 @@ function App(): JSX.Element {
         </View>
       </ScrollView>
     </SafeAreaView>
-  );
+  )
 }
 
-export default App;
+export default App

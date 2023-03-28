@@ -10,4 +10,4 @@ module.exports = {
     '<rootDir>/lib/',
   ],
   setupFilesAfterEnv: ['./jest.setup.js'],
-};
+}
