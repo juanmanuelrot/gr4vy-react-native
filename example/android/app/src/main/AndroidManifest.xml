@@ -25,7 +25,7 @@
           android:name="com.gr4vy.embedreactnative.Gr4vyActivity"
           android:screenOrientation="portrait">
       </activity>
-      <meta-data android:name="gr4vy-id" android:value="spider" />
+      <meta-data android:name="gr4vy-id" android:value="dev" />
       <meta-data android:name="gr4vy-environment" android:value="sandbox" />
     </application>
 </manifest>
