@@ -13,17 +13,44 @@ class EmbedReactNative: NSObject {
                  currency: String,
                  country: String,
                  buyerId: String?,
+                 externalIdentifier: String?,
+                 store: String?,
+                 display: String?,
+                 intent: String?,
+                 metadata: [String: String]?,
+                 paymentSource: String?,
+                 cartItems: [RCTCartItem]?,
                  environment: String?,
+                 debugMode: Bool = false,
                  completion: @escaping(_ gr4vy: Gr4vy?) -> Void)  {
-    DispatchQueue.main.async(execute: {
+    var paymentSourceConverted: Gr4vyPaymentSource?
+    if paymentSource != nil {
+        paymentSourceConverted = Gr4vyPaymentSource(rawValue: paymentSource!)
+    }
+
+    var cartItemsConverted: [Gr4vyCartItem]?
+    if let cartItems = cartItems {
+      cartItemsConverted = cartItems.compactMap { (item: RCTCartItem) -> Gr4vyCartItem? in
+        return try? Gr4vyCartItem(name: item.name, quantity: item.quantity, unitAmount: item.unitAmount)
+      }
+    }
+
+    DispatchQueue.main.async(execute: {  
       guard let gr4vy = Gr4vy(gr4vyId: gr4vyId,
                               token: token,
                               amount: amount,
                               currency: currency,
                               country: country,
                               buyerId: buyerId,
+                              externalIdentifier: externalIdentifier,
+                              store: store,
+                              display: display,
+                              intent: intent,
+                              metadata: metadata,
+                              paymentSource: paymentSourceConverted,
+                              cartItems: cartItemsConverted,
                               environment: (environment != nil && environment?.lowercased() == "production") ? .production : .sandbox,
-                              debugMode: true) else {
+                              debugMode: debugMode) else {
         completion(nil)
         return
       }
@@ -49,9 +76,15 @@ class EmbedReactNative: NSObject {
     currency: String,
     country: String,
     buyerId: String?,
+    externalIdentifier: String?,
+    store: String?,
+    display: String?,
+    intent: String?,
+    metadata: [String: String]?,
+    paymentSource: String?,
+    cartItems: [RCTCartItem]?,
     environment: String?,
-    errorCallback: @escaping RCTResponseSenderBlock,
-    successCallback: @escaping RCTResponseSenderBlock)
+    debugMode: Bool)
   {
     gr4vyInit(gr4vyId: gr4vyId,
              token: token,
@@ -59,9 +92,25 @@ class EmbedReactNative: NSObject {
              currency: currency,
              country: country,
              buyerId: buyerId,
-             environment: environment) { (gr4vy) in
+             externalIdentifier: externalIdentifier,
+             store: store,
+             display: display,
+             intent: intent,
+             metadata: metadata,
+             paymentSource: paymentSource,
+             cartItems: cartItems,
+             environment: environment,
+             debugMode: debugMode) { (gr4vy) in
       if gr4vy == nil {
-        errorCallback([NSNull(), "Failed to initialize Gr4vy SDK"])
+        EmbedReactNativeEvents.emitter.sendEvent(
+          withName: "onEvent",
+          body: [
+            "name": "generalError",
+            "data": [
+              "message" : "Failed to initialize Gr4vy SDK"
+            ]
+          ]
+        )
       }
 
       DispatchQueue.main.async(execute: {
@@ -73,28 +122,55 @@ class EmbedReactNative: NSObject {
               
               switch event {
               case .transactionFailed(let transactionID, let status, let paymentMethodID):
-                successCallback([[
-                  "success": false,
-                  "transactionId": transactionID,
-                  "status": status,
-                  "paymentMethodId": paymentMethodID as Any
-                ]])
+                EmbedReactNativeEvents.emitter.sendEvent(
+                  withName: "onEvent",
+                  body: [
+                    "name": "transactionFailed",
+                    "data": [
+                      "success": true,
+                      "transactionId": transactionID,
+                      "status": status,
+                      "paymentMethodId": paymentMethodID as Any
+                    ]
+                  ]
+                )
                 break
               case .transactionCreated(let transactionID, let status, let paymentMethodID):
-                successCallback([[
-                  "success": true,
-                  "transactionId": transactionID,
-                  "status": status,
-                  "paymentMethodId": paymentMethodID as Any
-                ]])
+                EmbedReactNativeEvents.emitter.sendEvent(
+                  withName: "onEvent",
+                  body: [
+                    "name": "transactionCreated",
+                    "data": [
+                      "success": true,
+                      "transactionId": transactionID,
+                      "status": status,
+                      "paymentMethodId": paymentMethodID as Any
+                    ]
+                  ]
+                )
                 break
               case .generalError(let error):
-                errorCallback([error.description, self.GR4VY_ERROR])
+                EmbedReactNativeEvents.emitter.sendEvent(
+                  withName: "onEvent",
+                  body: [
+                    "name": "generalError",
+                    "data": [
+                      "message" : error.description
+                    ]
+                  ]
+                )
                 break
               case .paymentMethodSelected(let id, let method, let mode):
                 EmbedReactNativeEvents.emitter.sendEvent(
-                  withName: "onPaymentMethodSelected",
-                  body: ["id" : id, "method": method, "mode": mode]
+                  withName: "onEvent",
+                  body: [
+                    "name": "paymentSelected",
+                    "data": [
+                      "id" : id,
+                      "method": method,
+                      "mode": mode
+                    ]
+                  ]
                 )
                 break
               }

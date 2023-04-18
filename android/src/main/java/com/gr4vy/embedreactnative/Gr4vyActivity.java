@@ -21,6 +21,7 @@ import static com.gr4vy.embedreactnative.EmbedReactNativeModule.EXTRA_COUNTRY;
 public class Gr4vyActivity extends ComponentActivity implements Gr4vyResultHandler {
   private Gr4vySDK gr4vySDK;
   private final ActivityResultRegistry activityResultRegistry = this.getActivityResultRegistry();
+  static final String EXTRA_EVENT = "EXTRA_EVENT";
   static final String EXTRA_ERROR = "EXTRA_ERROR";
   static final String EXTRA_SUCCESS = "EXTRA_SUCCESS";
   static final String EXTRA_STATUS = "EXTRA_STATUS";
@@ -31,6 +32,8 @@ public class Gr4vyActivity extends ComponentActivity implements Gr4vyResultHandl
   int amount;
   String currency;
   String country;
+
+  Boolean sdkLaunched = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +53,10 @@ public class Gr4vyActivity extends ComponentActivity implements Gr4vyResultHandl
   public void onStart() {
     super.onStart();
 
+    if (sdkLaunched) {
+      return;
+    }
+
     gr4vySDK.launch(
             this,
             token,
@@ -64,6 +71,8 @@ public class Gr4vyActivity extends ComponentActivity implements Gr4vyResultHandl
             null,
             PaymentSource.NOT_SET,
             null);
+    
+    sdkLaunched = true;
   }
 
   @Override
@@ -79,6 +88,7 @@ public class Gr4vyActivity extends ComponentActivity implements Gr4vyResultHandl
       Log.d("Gr4vy", "transactionId: " + ((Gr4vyResult.TransactionCreated) gr4vyResult).getTransactionId());
       Log.d("Gr4vy", "paymentMethodId: " + ((Gr4vyResult.TransactionCreated) gr4vyResult).getPaymentMethodId());
 
+      data.putExtra(EXTRA_EVENT, "transactionCreated");
       data.putExtra(EXTRA_SUCCESS, true);
       data.putExtra(EXTRA_STATUS, ((Gr4vyResult.TransactionCreated) gr4vyResult).getStatus());
       data.putExtra(EXTRA_TRANSACTION_ID, ((Gr4vyResult.TransactionCreated) gr4vyResult).getTransactionId());
@@ -94,6 +104,7 @@ public class Gr4vyActivity extends ComponentActivity implements Gr4vyResultHandl
       Log.d("Gr4vy", "transactionId: " + ((Gr4vyResult.TransactionFailed) gr4vyResult).getTransactionId());
       Log.d("Gr4vy", "paymentMethodId: " + ((Gr4vyResult.TransactionFailed) gr4vyResult).getPaymentMethodId());
 
+      data.putExtra(EXTRA_EVENT, "transactionFailed");
       data.putExtra(EXTRA_SUCCESS, true);
       data.putExtra(EXTRA_STATUS, ((Gr4vyResult.TransactionFailed) gr4vyResult).getStatus());
       data.putExtra(EXTRA_TRANSACTION_ID, ((Gr4vyResult.TransactionFailed) gr4vyResult).getTransactionId());
@@ -106,6 +117,7 @@ public class Gr4vyActivity extends ComponentActivity implements Gr4vyResultHandl
 
       Log.d("Gr4vy", "error: " + ((Gr4vyResult.GeneralError) gr4vyResult).getReason());
 
+      data.putExtra(EXTRA_EVENT, "generalError");
       data.putExtra(EXTRA_ERROR, ((Gr4vyResult.GeneralError) gr4vyResult).getReason());
 
       setResult(RESULT_OK, data);
@@ -114,6 +126,7 @@ public class Gr4vyActivity extends ComponentActivity implements Gr4vyResultHandl
         Log.d("Gr4vy", "An unknown error has occurred.");
     }
 
+    sdkLaunched = false;
     finish();
   }
 }

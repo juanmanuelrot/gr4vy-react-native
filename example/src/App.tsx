@@ -4,14 +4,9 @@ import { SafeAreaView, StatusBar } from 'react-native'
 import { Checkout } from './components/Checkout'
 import EmbedReactNative, {
   EmbedReactNativeEventEmitter,
-  Gr4vyTransactionResult,
-  Gr4vyPaymentMethod,
+  Gr4vyEvent,
 } from '@gr4vy/embed-react-native'
 import { total } from './constants/data'
-
-const onPaymentMethodSelected = (paymentMethod: Gr4vyPaymentMethod) => {
-  console.log('onPaymentMethodSelected', paymentMethod)
-}
 
 const config = {
   gr4vyId: `${GR4VY_ID}`,
@@ -20,14 +15,30 @@ const config = {
   amount: total,
   currency: 'USD',
   country: 'US',
+  buyerId: null,
+  externalIdentifier: null,
+  store: 'ask',
+  display: 'all',
+  intent: 'capture',
+  metadata: {},
+  paymentSource: null,
+  cartItems: null,
+  debugMode: true,
+}
+
+const onEvent = (event: Gr4vyEvent) => {
+  const { name, data } = event
+  console[name === 'generalError' ? 'error' : 'log'](name, data)
 }
 
 function App(): JSX.Element {
-  const onPaymentMethodSelectedSubscription =
-    EmbedReactNativeEventEmitter.addListener(
-      'onPaymentMethodSelected',
-      onPaymentMethodSelected
-    )
+  const onEventSubscription = EmbedReactNativeEventEmitter.addListener(
+    'onEvent',
+    (event: Gr4vyEvent) => {
+      onEvent(event)
+      onEventSubscription.remove()
+    }
+  )
 
   const handleCheckout = () => {
     EmbedReactNative.showPaymentSheet(
@@ -36,16 +47,16 @@ function App(): JSX.Element {
       config.amount,
       config.currency,
       config.country,
-      null,
+      config.buyerId,
+      config.externalIdentifier,
+      config.store,
+      config.display,
+      config.intent,
+      config.metadata,
+      config.paymentSource,
+      config.cartItems,
       config.env,
-      (error: string) => {
-        console.error(error)
-        onPaymentMethodSelectedSubscription.remove()
-      },
-      (transactionResult: Gr4vyTransactionResult) => {
-        console.log(transactionResult)
-        onPaymentMethodSelectedSubscription.remove()
-      }
+      config.debugMode
     )
   }
 

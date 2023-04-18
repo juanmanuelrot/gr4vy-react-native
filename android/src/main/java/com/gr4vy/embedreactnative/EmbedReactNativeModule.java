@@ -10,8 +10,12 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
+
+import com.gr4vy.embedreactnative.EmbedReactNativeEvents;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -26,8 +30,6 @@ public class EmbedReactNativeModule extends ReactContextBaseJavaModule {
   static final String EXTRA_COUNTRY = "EXTRA_COUNTRY";
   static final String EXTRA_BUYER_ID = "EXTRA_BUYER_ID";
   private static final int GR4VY_PAYMENT_SHEET_REQUEST = 1;
-  private Callback successCallback;
-  private Callback errorCallback;
 
   public EmbedReactNativeModule(ReactApplicationContext context) {
     super(context);
@@ -37,6 +39,7 @@ public class EmbedReactNativeModule extends ReactContextBaseJavaModule {
       public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
         if (requestCode == GR4VY_PAYMENT_SHEET_REQUEST) {
           if (resultCode == Activity.RESULT_OK) {
+            String event = data.getStringExtra(Gr4vyActivity.EXTRA_EVENT);
             String error = data.getStringExtra(Gr4vyActivity.EXTRA_ERROR);
 
             if (error == null) {
@@ -46,15 +49,28 @@ public class EmbedReactNativeModule extends ReactContextBaseJavaModule {
               String paymentMethodId = data.getStringExtra(Gr4vyActivity.EXTRA_PAYMENT_METHOD_ID);
 
               WritableMap result = Arguments.createMap();
-              result.putBoolean("success", success);
-              result.putString("status", status);
-              result.putString("transactionId", transactionId);
-              result.putString("paymentMethodId", paymentMethodId);
+              result.putString("name", event);
 
-              successCallback.invoke(result);
+              WritableMap resultData = Arguments.createMap();
+              resultData.putBoolean("success", success);
+              resultData.putString("status", status);
+              resultData.putString("transactionId", transactionId);
+              resultData.putString("paymentMethodId", paymentMethodId);
+
+              result.putMap("data", resultData);
+
+              EmbedReactNativeEvents.sendEvent(context, "onEvent", result);
             }
             else {
-              errorCallback.invoke(error);
+              WritableMap result = Arguments.createMap();
+              result.putString("name", event);
+
+              WritableMap resultData = Arguments.createMap();
+              resultData.putString("message", error);
+
+              result.putMap("data", resultData);
+
+              EmbedReactNativeEvents.sendEvent(context, "onEvent", result);
             }
           } else if (resultCode == Activity.RESULT_CANCELED) {
             // Do nothing
@@ -80,23 +96,26 @@ public class EmbedReactNativeModule extends ReactContextBaseJavaModule {
     String currency,
     String country,
     String buyerId,
+    String externalIdentifier,
+    String store,
+    String display,
+    String intent,
+    ReadableMap metadata,
+    String paymentSource,
+    ReadableArray cartItems,
     String environment,
-    Callback errorCallback,
-    Callback successCallback) {
+    Boolean debugMode) {
       Log.d("Gr4vy", "showPaymentSheet()");
 
       ReactApplicationContext context = getReactApplicationContext();
-      Intent intent = new Intent(context, Gr4vyActivity.class);
+      Intent androidIntent = new Intent(context, Gr4vyActivity.class);
 
-      this.successCallback = successCallback;
-      this.errorCallback = errorCallback;
+      androidIntent.putExtra(EXTRA_TOKEN, token);
+      androidIntent.putExtra(EXTRA_AMOUNT, Integer.valueOf(amount.intValue()));
+      androidIntent.putExtra(EXTRA_CURRENCY, currency);
+      androidIntent.putExtra(EXTRA_COUNTRY, country);
+      androidIntent.putExtra(EXTRA_BUYER_ID, buyerId);
 
-      intent.putExtra(EXTRA_TOKEN, token);
-      intent.putExtra(EXTRA_AMOUNT, Integer.valueOf(amount.intValue()));
-      intent.putExtra(EXTRA_CURRENCY, currency);
-      intent.putExtra(EXTRA_COUNTRY, country);
-      intent.putExtra(EXTRA_BUYER_ID, buyerId);
-
-      context.startActivityForResult(intent, GR4VY_PAYMENT_SHEET_REQUEST, null);
+      context.startActivityForResult(androidIntent, GR4VY_PAYMENT_SHEET_REQUEST, null);
     }
 }
