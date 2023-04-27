@@ -21,6 +21,13 @@ class EmbedReactNative: NSObject {
                  paymentSource: String?,
                  cartItems: [Gr4vyCartItem]?,
                  environment: String?,
+                 applePayMerchantId: String?,
+                 theme: Gr4vyTheme?,
+                 buyerExternalIdentifier: String?,
+                 locale: String?,
+                 statementDescriptor: Gr4vyStatementDescriptor?,
+                 requireSecurityCode: Bool?,
+                 shippingDetailsId: String?,
                  debugMode: Bool = false,
                  completion: @escaping(_ gr4vy: Gr4vy?) -> Void)  {
     var paymentSourceConverted: Gr4vyPaymentSource?
@@ -43,6 +50,13 @@ class EmbedReactNative: NSObject {
                               paymentSource: paymentSourceConverted,
                               cartItems: cartItems,
                               environment: (environment != nil && environment?.lowercased() == "production") ? .production : .sandbox,
+                              applePayMerchantId: applePayMerchantId,
+                              theme: theme,
+                              buyerExternalIdentifier: buyerExternalIdentifier,
+                              locale: locale,
+                              statementDescriptor: statementDescriptor,
+                              requireSecurityCode: requireSecurityCode,
+                              shippingDetailsId: shippingDetailsId,
                               debugMode: debugMode) else {
         completion(nil)
         return
@@ -50,6 +64,125 @@ class EmbedReactNative: NSObject {
 
       completion(gr4vy)
     })
+  }
+    
+  func buildTheme(_ source: [String: [String: String?]?]?) -> Gr4vyTheme? {
+    guard let theme = source,
+          let fonts = theme["fonts"] ?? [:],
+          let fontsBody = fonts["body"] ?? "",
+          let colors = theme["colors"] ?? [:],
+          let colorsText = colors["text"] ?? "",
+          let colorsSubtleText = colors["subtleText"] ?? "",
+          let colorsLabelText = colors["labelText"] ?? "",
+          let colorsPrimary = colors["primary"] ?? "",
+          let colorsPageBackground = colors["pageBackground"] ?? "",
+          let colorsContainerBackgroundUnchecked = colors["containerBackgroundUnchecked"] ?? "",
+          let colorsContainerBackground = colors["containerBackground"] ?? "",
+          let colorsContainerBorder = colors["containerBorder"] ?? "",
+          let colorsInputBorder = colors["inputBorder"] ?? "",
+          let colorsInputBackground = colors["inputBackground"] ?? "",
+          let colorsInputText = colors["inputText"] ?? "",
+          let colorsInputRadioBorder = colors["inputRadioBorder"] ?? "",
+          let colorsInputRadioBorderChecked = colors["inputRadioBorderChecked"] ?? "",
+          let colorsDanger = colors["danger"] ?? "",
+          let colorsDangerBackground = colors["dangerBackground"] ?? "",
+          let colorsDangerText = colors["dangerText"] ?? "",
+          let colorsInfo = colors["info"] ?? "",
+          let colorsInfoBackground = colors["infoBackground"] ?? "",
+          let colorsInfoText = colors["infoText"] ?? "",
+          let colorsFocus = colors["focus"] ?? "",
+          let colorsHeaderText = colors["headerText"] ?? "",
+          let colorsHeaderBackground = colors["headerBackground"] ?? "",
+          let borderWidths = theme["borderWidths"] ?? [:],
+          let borderWidthsContainer = borderWidths["container"] ?? "",
+          let borderWidthsInput = borderWidths["input"] ?? "",
+          let radii = theme["radii"] ?? [:],
+          let radiiContainer = radii["container"] ?? "",
+          let radiiInput = radii["input"] ?? "",
+          let shadows = theme["shadows"] ?? [:],
+          let shadowsFocusRing = shadows["focusRing"] ?? ""
+    else {
+      return nil
+    }
+
+    return Gr4vyTheme(
+      fonts: Gr4vyFonts(
+        body: fontsBody
+      ),
+      colors: Gr4vyColours(
+        text: colorsText,
+        subtleText: colorsSubtleText,
+        labelText: colorsLabelText,
+        primary: colorsPrimary,
+        pageBackground: colorsPageBackground,
+        containerBackgroundUnchecked: colorsContainerBackgroundUnchecked,
+        containerBackground: colorsContainerBackground,
+        containerBorder: colorsContainerBorder,
+        inputBorder: colorsInputBorder,
+        inputBackground: colorsInputBackground,
+        inputText: colorsInputText,
+        inputRadioBorder: colorsInputRadioBorder,
+        inputRadioBorderChecked: colorsInputRadioBorderChecked,
+        danger: colorsDanger,
+        dangerBackground: colorsDangerBackground,
+        dangerText: colorsDangerText,
+        info: colorsInfo,
+        infoBackground: colorsInfoBackground,
+        infoText: colorsInfoText,
+        focus: colorsFocus,
+        headerText: colorsHeaderText,
+        headerBackground: colorsHeaderBackground
+      ),
+      borderWidths: Gr4vyBorderWidths(
+        container: borderWidthsContainer,
+        input: borderWidthsInput
+      ),
+      radii: Gr4vyRadii(
+        container: radiiContainer,
+        input: radiiInput
+      ),
+      shadows: Gr4vyShadows(
+        focusRing: shadowsFocusRing
+      )
+    )
+  }
+    
+  func convertStatementDescriptor(_ source: [String: String?]?) -> Gr4vyStatementDescriptor? {
+    guard let statementDescriptor = source,
+          let name = statementDescriptor["name"] ?? "",
+          let description = statementDescriptor["description"] ?? "",
+          let phoneNumber = statementDescriptor["phoneNumber"] ?? "",
+          let city = statementDescriptor["city"] ?? "",
+          let url = statementDescriptor["url"] ?? "" else {
+        return nil
+    }
+      
+    return Gr4vyStatementDescriptor(
+        name: name,
+        description: description,
+        phoneNumber: phoneNumber,
+        city: city,
+        url: url
+    )
+  }
+    
+  func convertCartItems(_ cartItems: NSArray?) -> [Gr4vyCartItem] {
+    guard let cartItems = cartItems else {
+      return []
+    }
+
+    var result = [Gr4vyCartItem]()
+    for item in cartItems {
+      guard let dict = item as? [String: Any],
+            let name = dict["name"] as? String,
+            let quantity = dict["quantity"] as? Int,
+            let unitAmount = dict["unitAmount"] as? Int else {
+          return []
+      }
+      result.append(Gr4vyCartItem(name: name, quantity: quantity, unitAmount: unitAmount))
+    }
+
+    return result
   }
   
   @objc
@@ -65,7 +198,6 @@ class EmbedReactNative: NSObject {
   func showPaymentSheet(_ config: [String: Any])
   {
     guard let gr4vyId = config["gr4vyId"] as? String,
-          let environment = config["environment"] as? String?,
           let token = config["token"] as? String,
           let amount = config["amount"] as? Double,
           let currency = config["currency"] as? String,
@@ -77,7 +209,15 @@ class EmbedReactNative: NSObject {
           let intent = config["intent"] as? String?,
           let metadata = config["metadata"] as? [String: String]?,
           let paymentSource = config["paymentSource"] as? String?,
-          let cartItems = config["cartItems"] as? [Gr4vyCartItem]?,
+          let cartItems = config["cartItems"] as? NSArray?,
+          let environment = config["environment"] as? String?,
+          let applePayMerchantId = config["applePayMerchantId"] as? String?,
+          let theme = config["theme"] as? [String: [String: String?]?]?,
+          let buyerExternalIdentifier = config["buyerExternalIdentifier"] as? String?,
+          let locale = config["locale"] as? String?,
+          let statementDescriptor = config["statementDescriptor"] as? [String: String?]?,
+          let requireSecurityCode = config["requireSecurityCode"] as? Bool?,
+          let shippingDetailsId = config["shippingDetailsId"] as? String?,
           let debugMode = config["debugMode"] as? Bool
     else {
         EmbedReactNativeEvents.emitter.sendEvent(
@@ -104,8 +244,15 @@ class EmbedReactNative: NSObject {
              intent: intent,
              metadata: metadata,
              paymentSource: paymentSource,
-             cartItems: cartItems,
+             cartItems: convertCartItems(cartItems),
              environment: environment,
+             applePayMerchantId: applePayMerchantId,
+             theme: buildTheme(theme),
+             buyerExternalIdentifier: buyerExternalIdentifier,
+             locale: locale,
+             statementDescriptor: convertStatementDescriptor(statementDescriptor),
+             requireSecurityCode: requireSecurityCode,
+             shippingDetailsId: shippingDetailsId,
              debugMode: debugMode) { (gr4vy) in
       if gr4vy == nil {
         EmbedReactNativeEvents.emitter.sendEvent(
@@ -133,7 +280,7 @@ class EmbedReactNative: NSObject {
                   body: [
                     "name": "transactionFailed",
                     "data": [
-                      "success": true,
+                      "success": false,
                       "transactionId": transactionID,
                       "status": status,
                       "paymentMethodId": paymentMethodID as Any

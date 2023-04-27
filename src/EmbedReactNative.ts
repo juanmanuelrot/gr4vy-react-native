@@ -42,11 +42,63 @@ export type Gr4vyConfig = {
   intent?: 'authorize' | 'capture'
   metadata?: Record<string, string>
   paymentSource?: 'installment' | 'recurring' | null
-  cartItems?: {
+  applePayMerchantId?: string
+  cartItems?: Array<{
     name: string
-    quantity: string
-    unitAmount: string
-  } | null
+    quantity: number
+    unitAmount: number
+  }> | null
+  theme?: {
+    fonts?: {
+      body?: string
+    }
+    borderWidths?: {
+      container?: 'none' | 'thin' | 'thick'
+      input?: 'thin' | 'thick'
+    }
+    colors?: {
+      primary?: string
+      text?: string
+      subtleText?: string
+      labelText?: string
+      containerBackgroundUnchecked?: string
+      containerBackground?: string
+      containerBorder?: string
+      pageBackground?: string
+      inputBorder?: string
+      inputText?: string
+      inputBackground?: string
+      inputRadioBorder?: string
+      inputRadioBorderChecked?: string
+      info?: string
+      infoBackground?: string
+      infoText?: string
+      danger?: string
+      dangerBackground?: string
+      dangerText?: string
+      focus?: string
+      headerBackground?: string
+      headerText?: string
+    }
+    radii?: {
+      input?: 'none' | 'subtle' | 'rounded'
+      container?: 'none' | 'subtle' | 'rounded'
+    }
+    shadows?: {
+      focusRing?: string
+    }
+  }
+  buyerExternalIdentifier?: string
+  locale?: string
+  statementDescriptor?: {
+    name?: string
+    description?: string
+    phoneNumber?: string
+    city?: string
+    url?: string
+  }
+  requireSecurityCode?: boolean
+  shippingDetailsId?: string
   debugMode?: boolean
 }
 
