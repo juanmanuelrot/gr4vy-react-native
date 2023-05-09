@@ -1,3 +1,24 @@
+# v0.2.0 (Tue May 09 2023)
+
+#### 🚀 Enhancement
+
+- feat: update docs [#7](https://github.com/gr4vy/gr4vy-react-native/pull/7) ([@luca-gr4vy](https://github.com/luca-gr4vy))
+
+#### 🐛 Bug Fix
+
+- feat: add latest props [#6](https://github.com/gr4vy/gr4vy-react-native/pull/6) ([@luca-gr4vy](https://github.com/luca-gr4vy))
+- feat: allow passing a config object instead of separate arguments [#5](https://github.com/gr4vy/gr4vy-react-native/pull/5) ([@luca-gr4vy](https://github.com/luca-gr4vy))
+- feat: add support for all interface attributes [#3](https://github.com/gr4vy/gr4vy-react-native/pull/3) ([@luca-gr4vy](https://github.com/luca-gr4vy))
+- feat: add example app [#2](https://github.com/gr4vy/gr4vy-react-native/pull/2) ([@theturboboy](https://github.com/theturboboy))
+- Set cocoapods v1.12 [#4](https://github.com/gr4vy/gr4vy-react-native/pull/4) ([@luca-gr4vy](https://github.com/luca-gr4vy))
+
+#### Authors: 2
+
+- Andrei Haidukevich ([@theturboboy](https://github.com/theturboboy))
+- Luca Allievi ([@luca-gr4vy](https://github.com/luca-gr4vy))
+
+---
+
 # v0.1.1 (Thu Mar 30 2023)
 
 #### 🐛 Bug Fix
