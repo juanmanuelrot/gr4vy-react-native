@@ -25,17 +25,11 @@ cartItems.push(shipping)
 
 const config: Gr4vyConfig = {
   gr4vyId: `${GR4VY_ID}`,
-  environment: 'sandbox',
   token: `${TOKEN}`,
   amount: total,
-  currency: 'GBP',
-  country: 'GB',
-  // buyerId: 'baa7b3b3-a4f1-49e3-afb0-0f41b48f5aa2',
-  externalIdentifier: 'myExternalIdentifier',
-  store: 'ask',
-  display: 'all',
+  currency: 'USD',
+  country: 'US',
   intent: 'capture',
-  metadata: { asd: 'lol' },
   applePayMerchantId: 'merchant.com.gr4vy.demo',
   cartItems,
   theme: {
@@ -54,8 +48,8 @@ const config: Gr4vyConfig = {
       inputBorder: '#f2f2f2',
       inputBackground: '#2a4159',
       inputText: '#fff',
-      // inputRadioBorder: '#fff',
-      // inputRadioBorderChecked: '#fff',
+      inputRadioBorder: '#fff',
+      inputRadioBorderChecked: '#fff',
       danger: '#ff556a',
       dangerBackground: '#2c4765',
       dangerText: '#fff',
@@ -78,17 +72,6 @@ const config: Gr4vyConfig = {
       focusRing: '0 0 0 2px #ffffff, 0 0 0 4px #4844ff',
     },
   },
-  buyerExternalIdentifier: 'user-001',
-  locale: 'pt-PT',
-  statementDescriptor: {
-    name: 'RN test purchase',
-    description: 'something something',
-    phoneNumber: '+15555551234',
-    city: 'San Francisco',
-    url: 'https://gr4vy.com',
-  },
-  // requireSecurityCode: true,
-  // shippingDetailsId: '5e842a7e-88f7-4be2-87c2-0c7175aa2395',
   debugMode: true,
 }
 
