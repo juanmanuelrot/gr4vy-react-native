@@ -1,3 +1,19 @@
+# v0.3.0 (Thu May 18 2023)
+
+#### 🚀 Enhancement
+
+- fix: docs [#9](https://github.com/gr4vy/gr4vy-react-native/pull/9) ([@luca-gr4vy](https://github.com/luca-gr4vy))
+
+#### 🐛 Bug Fix
+
+- feat: add merchant account id prop [#8](https://github.com/gr4vy/gr4vy-react-native/pull/8) ([@luca-gr4vy](https://github.com/luca-gr4vy))
+
+#### Authors: 1
+
+- Luca Allievi ([@luca-gr4vy](https://github.com/luca-gr4vy))
+
+---
+
 # v0.2.0 (Tue May 09 2023)
 
 #### 🚀 Enhancement
