@@ -1,3 +1,15 @@
+# v0.4.0 (Mon May 22 2023)
+
+#### 🚀 Enhancement
+
+- chore: upgrade SDKs [#10](https://github.com/gr4vy/gr4vy-react-native/pull/10) ([@luca-gr4vy](https://github.com/luca-gr4vy))
+
+#### Authors: 1
+
+- Luca Allievi ([@luca-gr4vy](https://github.com/luca-gr4vy))
+
+---
+
 # v0.3.0 (Thu May 18 2023)
 
 #### 🚀 Enhancement
