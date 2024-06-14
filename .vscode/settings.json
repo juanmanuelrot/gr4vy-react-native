@@ -3,5 +3,6 @@
   "editor.formatOnType": true,
   "editor.formatOnPaste": true,
   "eslint.format.enable": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "java.configuration.updateBuildConfiguration": "interactive"
 }
